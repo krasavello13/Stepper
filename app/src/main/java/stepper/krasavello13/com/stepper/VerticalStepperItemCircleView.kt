@@ -1,74 +1,30 @@
 package stepper.krasavello13.com.stepper
 
-import android.annotation.TargetApi
 import android.content.Context
-import android.content.res.TypedArray
-import android.graphics.drawable.Drawable
 import android.graphics.drawable.GradientDrawable
-import android.os.Build
-import android.support.graphics.drawable.VectorDrawableCompat
-import android.support.v4.content.ContextCompat
 import android.util.AttributeSet
-import android.util.TypedValue
-import android.view.LayoutInflater
 import android.view.View
 import android.widget.FrameLayout
-import android.widget.ImageView
-import android.widget.TextView
+import androidx.core.content.ContextCompat
+import kotlinx.android.extensions.LayoutContainer
+import kotlinx.android.synthetic.main.vertical_stepper_view_item_circle.view.*
 import stepper.krasavello13.com.R
 
-class VerticalStepperItemCircleView : FrameLayout {
-    private var number: TextView? = null
+class VerticalStepperItemCircleView @JvmOverloads constructor(
+    context: Context,
+    attrs: AttributeSet? = null,
+    defStyleAttr: Int = 0
+) : FrameLayout(context, attrs, defStyleAttr), LayoutContainer {
 
-    private var icon: ImageView? = null
-
-    constructor(context: Context) : super(context) {
-        initialize(context)
-    }
-
-    constructor(context: Context, attrs: AttributeSet) : super(context, attrs) {
-        initialize(context)
-    }
-
-    constructor(
-        context: Context,
-        attrs: AttributeSet,
-        defStyleAttr: Int
-    ) : super(context, attrs, defStyleAttr) {
-        initialize(context)
-    }
-
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    constructor(
-        context: Context,
-        attrs: AttributeSet,
-        defStyleAttr: Int,
-        defStyleRes: Int
-    ) : super(context, attrs, defStyleAttr, defStyleRes) {
-        initialize(context)
-    }
-
-    private fun initialize(context: Context) {
-        LayoutInflater.from(context).inflate(
-            R.layout.vertical_stepper_view_item_circle,
-            this,
-            true
-        )
-
-        number = findViewById<View>(R.id.vertical_stepper_view_item_circle_number) as TextView
-        icon = findViewById<View>(R.id.vertical_stepper_view_item_circle_icon) as ImageView
-    }
+    override val containerView: View = inflate(R.layout.vertical_stepper_view_item_circle, true)
 
     fun setBackgroundActive() {
-        val drawable = ContextCompat
-            .getDrawable(
-                context,
-                R.drawable.vertical_stepper_view_item_circle_active
-            ) as GradientDrawable?
-        drawable!!.setColor(
-            Util
-                .getThemeColor(context, R.attr.colorAccent)
-        )
+        (ContextCompat.getDrawable(
+            context,
+            R.drawable.vertical_stepper_view_item_circle_active
+        ) as GradientDrawable).apply {
+            setColor(context.getThemeColor(R.attr.colorAccent))
+        }
         setBackgroundResource(R.drawable.vertical_stepper_view_item_circle_active)
     }
 
@@ -77,9 +33,9 @@ class VerticalStepperItemCircleView : FrameLayout {
     }
 
     fun setNumber(value: Int) {
-        icon!!.visibility = View.GONE
-        number!!.visibility = View.VISIBLE
-        number!!.text = value.toString()
+        stepperViewItemCircleIcon.gone()
+        stepperViewItemCircleNumber.visible()
+        stepperViewItemCircleNumber.text = value.toString()
     }
 
     fun setIconCheck() {
@@ -91,8 +47,8 @@ class VerticalStepperItemCircleView : FrameLayout {
     }
 
     fun setIconResource(id: Int) {
-        number!!.visibility = View.GONE
-        icon!!.visibility = View.VISIBLE
-        icon!!.setImageResource(id)
+        stepperViewItemCircleNumber.gone()
+        stepperViewItemCircleIcon.visible()
+        stepperViewItemCircleIcon.setImageResource(id)
     }
 }

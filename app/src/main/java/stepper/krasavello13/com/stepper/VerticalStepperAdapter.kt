@@ -1,27 +1,37 @@
 package stepper.krasavello13.com.stepper
 
-import android.content.Context
-import android.util.SparseArray
 import android.view.View
 import android.view.ViewGroup
-import android.widget.BaseAdapter
+import androidx.recyclerview.widget.RecyclerView
+import stepper.krasavello13.com.stepper.VerticalStepperAdapter.VerticalStepperViewHolder
+import stepper.krasavello13.com.stepper.VerticalStepperItemView.StepperItemState
+import stepper.krasavello13.com.stepper.VerticalStepperItemView.StepperItemState.*
 
-abstract class VerticalStepperAdapter(context: Context) : BaseAdapter() {
+abstract class VerticalStepperAdapter : RecyclerView.Adapter<VerticalStepperViewHolder>() {
 
-    var focus = 0
-        private set
+    private var recyclerView: RecyclerView? = null
 
-    val contentViews = SparseArray<View>(count)
-
-    init {
-        for (i in 0 until count) {
-            getContentView(context, i)
-        }
+    override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
+        super.onAttachedToRecyclerView(recyclerView)
+        this.recyclerView = recyclerView
     }
 
-    override fun isEnabled(position: Int): Boolean {
-        return isEditable(position) && getState(position) == VerticalStepperItemView.STATE_COMPLETE
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VerticalStepperViewHolder =
+        VerticalStepperViewHolder(VerticalStepperItemView(parent.context).apply {
+            contentView.inflate(viewType, true)
+        })
+
+    override fun onBindViewHolder(holder: VerticalStepperViewHolder, position: Int) {
+        holder.containerView.state = getState(position)
+        holder.containerView.setCircleNumber(getCircleNumber(position))
+        holder.containerView.setTitle(getTitle(position))
+        holder.containerView.setSummary(getSummary(position))
+        holder.containerView.isEditable = isEditable(position)
+        holder.containerView.showConnectorLine = showConnectorLine(position)
+        onBind(holder.containerView.contentView, position)
     }
+
+    private var focus = 0
 
     abstract fun getTitle(position: Int): CharSequence
 
@@ -29,94 +39,13 @@ abstract class VerticalStepperAdapter(context: Context) : BaseAdapter() {
 
     abstract fun isEditable(position: Int): Boolean
 
-    override fun getItemId(position: Int): Long {
-        return position.toLong()
-    }
+    abstract fun getItemType(position: Int): Int
 
-    override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
-        val context = parent.context
-        val itemView: VerticalStepperItemView
+    abstract fun onBind(content: View, position: Int)
 
-        itemView = if (convertView == null) {
-            VerticalStepperItemView(context)
-        } else {
-            (convertView as VerticalStepperItemView?)!!
-        }
+    override fun getItemViewType(position: Int): Int = getItemType(position)
 
-        applyData(context, itemView, position)
-
-        return itemView
-    }
-
-    fun getState(position: Int): Int {
-        return if (position == focus)
-            VerticalStepperItemView.STATE_ACTIVE
-        else if (position < focus)
-            VerticalStepperItemView.STATE_COMPLETE
-        else
-            VerticalStepperItemView.STATE_INACTIVE
-    }
-
-    private fun getCircleNumber(position: Int): Int {
-        return position + 1
-    }
-
-    private fun showConnectorLine(position: Int): Boolean {
-        return position < count - 1
-    }
-
-    abstract fun onCreateContentView(context: Context, position: Int): View
-
-    private fun getContentView(context: Context, position: Int): View? {
-        val id = getItemId(position).toInt()
-        var contentView: View? = contentViews.get(id)
-
-        contentView = onCreateContentView(context, position)
-        contentViews.put(id, contentView)
-
-        return contentView
-    }
-
-    fun invalidateContentView(position: Int) {
-        val id = getItemId(position).toInt()
-        contentViews.remove(id)
-        notifyDataSetChanged()
-    }
-
-    private fun applyData(context: Context, itemView: VerticalStepperItemView, position: Int) {
-        val currentContentView = itemView.contentView
-        val contentView = getContentView(context, position)
-
-        if (currentContentView != contentView) {
-            // Make sure the content view isn't attached to a foreign parent
-            contentView?.parent?.let {
-                val parent = it as ViewGroup
-                parent.removeView(it)
-
-
-            }
-        }
-
-        itemView.contentView = getContentView(context, position)
-
-        itemView.state = getState(position)
-        itemView.setCircleNumber(getCircleNumber(position))
-        itemView.setTitle(getTitle(position))
-        itemView.setSummary(getSummary(position)!!)
-        itemView.isEditable = isEditable(position)
-        itemView.showConnectorLine = showConnectorLine(position)
-    }
-
-    fun jumpTo(position: Int) {
-        if (focus != position) {
-            focus = position
-            notifyDataSetChanged()
-        }
-    }
-
-    fun hasPrevious(): Boolean {
-        return focus > 0
-    }
+    override fun getItemId(position: Int): Long = position.toLong()
 
     fun previous() {
         if (hasPrevious()) {
@@ -124,13 +53,36 @@ abstract class VerticalStepperAdapter(context: Context) : BaseAdapter() {
         }
     }
 
-    operator fun hasNext(): Boolean {
-        return focus < count - 1
-    }
-
-    operator fun next() {
+    fun next() {
         if (hasNext()) {
             jumpTo(focus + 1)
         }
     }
+
+    private fun getState(position: Int): StepperItemState {
+        return when {
+            position == focus -> STATE_ACTIVE
+            position < focus -> STATE_COMPLETE
+            else -> STATE_INACTIVE
+        }
+    }
+
+    private fun showConnectorLine(position: Int): Boolean = position < itemCount - 1
+
+    private fun getCircleNumber(position: Int): Int = position + 1
+
+    private fun jumpTo(position: Int) {
+        if (focus != position) {
+            val prevFocus = focus
+            focus = position
+            notifyItemChanged(prevFocus)
+            notifyItemChanged(focus)
+        }
+    }
+
+    private fun hasPrevious(): Boolean = focus > 0
+
+    private fun hasNext(): Boolean = focus < itemCount - 1
+
+    class VerticalStepperViewHolder(val containerView: VerticalStepperItemView) : RecyclerView.ViewHolder(containerView)
 }

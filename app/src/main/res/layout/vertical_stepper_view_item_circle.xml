@@ -5,7 +5,7 @@
     <!-- Number -->
 
     <TextView
-            android:id="@+id/vertical_stepper_view_item_circle_number"
+            android:id="@+id/stepperViewItemCircleNumber"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center"
@@ -16,7 +16,7 @@
     <!-- Icon -->
 
     <ImageView
-            android:id="@+id/vertical_stepper_view_item_circle_icon"
+            android:id="@+id/stepperViewItemCircleIcon"
             android:layout_width="16dp"
             android:layout_height="16dp"
             android:layout_gravity="center"

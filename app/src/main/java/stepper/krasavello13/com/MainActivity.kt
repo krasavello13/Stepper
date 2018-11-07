@@ -1,10 +1,9 @@
 package stepper.krasavello13.com
 
-import android.support.v7.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.activity_main.*
-import stepper.krasavello13.com.stepper.VerticalStepperView
-
 
 
 class MainActivity : AppCompatActivity() {
@@ -12,6 +11,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        stepper_list.setStepperAdapter(MainStepperAdapter(this))
+        stepper.layoutManager = LinearLayoutManager(this)
+        stepper.adapter = MainStepperAdapter()
     }
 }

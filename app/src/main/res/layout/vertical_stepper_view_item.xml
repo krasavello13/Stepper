@@ -5,12 +5,12 @@
     <!-- Circle -->
 
     <stepper.krasavello13.com.stepper.VerticalStepperItemCircleView
-            android:id="@+id/vertical_stepper_view_item_circle"
+            android:id="@+id/stepperViewItemCircle"
             android:layout_width="24dp"
             android:layout_height="24dp" />
 
     <LinearLayout
-            android:id="@+id/vertical_stepper_view_item_wrapper"
+            android:id="@+id/stepperViewItemContainer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="36dp"
@@ -21,7 +21,7 @@
         <!-- Title -->
 
         <TextView
-                android:id="@+id/vertical_stepper_view_item_title"
+                android:id="@+id/stepperViewItemTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textSize="14sp" />
@@ -29,7 +29,7 @@
         <!-- Summary -->
 
         <TextView
-                android:id="@+id/vertical_stepper_view_item_summary"
+                android:id="@+id/stepperViewItemSummary"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textSize="14sp" />
@@ -37,7 +37,7 @@
         <!-- Content -->
 
         <FrameLayout
-                android:id="@+id/vertical_stepper_view_item_content_wrapper"
+                android:id="@+id/stepperViewItemContent"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
